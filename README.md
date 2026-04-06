@@ -2,7 +2,13 @@
 
 OpenClaw plugin for sending native Slack Block Kit cards and handling interactive button clicks.
 
+Send interactive cards to Slack and handle button clicks — all driven by your OpenClaw agent.
+
+**Built-in templates** (approval, task-progress, pick-one) work out of the box:
+
 <img src="assets/approval-card.png" width="400" alt="Approval card" />
+
+**Custom Block Kit layouts** let you build rich cards with images, structured content, and multiple actions:
 
 <img src="assets/custom-card.png" width="480" alt="Custom card with images" />
 
