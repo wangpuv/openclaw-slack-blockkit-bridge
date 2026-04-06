@@ -1,0 +1,11 @@
+{
+  "kind": "task-progress",
+  "channel": "YOUR_CHANNEL_ID",
+  "title": "现在开始做 TodayMode 吗？",
+  "body": "这是 task-progress 模板示例。",
+  "sessionKey": "template-task-progress-example",
+  "metadata": {
+    "purpose": "template-task-progress-example",
+    "createdBy": "wilbot"
+  }
+}

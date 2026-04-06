@@ -1,0 +1,207 @@
+{
+  "id": "slack-blockkit-bridge",
+  "name": "Slack Block Kit Bridge",
+  "version": "0.1.0",
+  "description": "Send interactive Slack Block Kit cards and handle button clicks. Use the `slack-blockkit-bridge.send-template` gateway method to send pre-built interactive cards (approval, task-progress, pick-one) to a Slack channel. Cards support button interactions that are automatically tracked and handled. Channel must be a Slack channel ID (e.g. C1234567890), not a channel name.",
+  "gatewayMethods": [
+    {
+      "name": "slack-blockkit-bridge.send-template",
+      "description": "Send a pre-built interactive card to a Slack channel. This is the recommended method — prefer it over send unless you need custom Block Kit layout.",
+      "params": {
+        "kind": {
+          "type": "string",
+          "enum": ["approval", "task-progress", "pick-one"],
+          "required": true,
+          "description": "Card template type. approval = approve/reject buttons. task-progress = start/done buttons. pick-one = custom option buttons (requires options)."
+        },
+        "channel": {
+          "type": "string",
+          "required": true,
+          "description": "Slack channel ID (e.g. C1234567890). Must be a channel ID, not a name."
+        },
+        "title": {
+          "type": "string",
+          "required": true,
+          "description": "Main question or heading shown on the card."
+        },
+        "body": {
+          "type": "string",
+          "description": "Optional supporting text shown below the title."
+        },
+        "threadTs": {
+          "type": "string",
+          "description": "Optional. Post as a reply in this thread (Slack message timestamp)."
+        },
+        "options": {
+          "type": "array",
+          "description": "Required for pick-one. Optional override for approval/task-progress. Each item: { value: string, label: string, style?: 'primary'|'danger' }. Minimum 2 items for pick-one.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": { "type": "string" },
+              "label": { "type": "string" },
+              "style": { "type": "string", "enum": ["primary", "danger"] }
+            }
+          }
+        },
+        "sessionKey": {
+          "type": "string",
+          "description": "Optional. Identifier for correlating this card with a session or task."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Optional. Arbitrary key-value data to store with the card."
+        },
+        "postActionRenderMode": {
+          "type": "string",
+          "enum": ["replace", "preserve"],
+          "description": "Optional. How the card looks after a button is clicked. replace (default): card becomes a handled confirmation. preserve: original card stays visible with the chosen option marked and a result appended."
+        }
+      },
+      "examples": [
+        {
+          "description": "Approval card",
+          "params": {
+            "kind": "approval",
+            "channel": "YOUR_CHANNEL_ID",
+            "title": "是否现在发布？",
+            "body": "确认后将立即触发发布流程。"
+          }
+        },
+        {
+          "description": "Task progress card",
+          "params": {
+            "kind": "task-progress",
+            "channel": "YOUR_CHANNEL_ID",
+            "title": "现在开始做 TodayMode 吗？"
+          }
+        },
+        {
+          "description": "Pick-one card with custom options",
+          "params": {
+            "kind": "pick-one",
+            "channel": "YOUR_CHANNEL_ID",
+            "title": "今晚先推进哪一块？",
+            "options": [
+              { "value": "todaymode", "label": "TodayMode", "style": "primary" },
+              { "value": "editorial", "label": "编辑部工作流" },
+              { "value": "english", "label": "英语练习" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "slack-blockkit-bridge.send",
+      "description": "Send a custom Block Kit card. Use this only when send-template doesn't fit. IMPORTANT: all interactive button action_ids must start with 'wbk:' (e.g. 'wbk:review:approve'). You must also pass a matching 'actions' array to register the action labels.",
+      "params": {
+        "channel": {
+          "type": "string",
+          "required": true,
+          "description": "Slack channel ID."
+        },
+        "text": {
+          "type": "string",
+          "required": true,
+          "description": "Fallback plain text (shown in notifications)."
+        },
+        "blocks": {
+          "type": "array",
+          "required": true,
+          "description": "Slack Block Kit blocks array. Interactive buttons must use action_id starting with 'wbk:' (e.g. 'wbk:review:approve')."
+        },
+        "actions": {
+          "type": "array",
+          "description": "Required when blocks contain interactive buttons. Maps each wbk: action_id to a human-readable name. Each item: { actionId: string, actionName: string }.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "actionId": { "type": "string" },
+              "actionName": { "type": "string" }
+            }
+          }
+        },
+        "threadTs": { "type": "string", "description": "Optional thread timestamp to reply into." },
+        "metadata": { "type": "object" },
+        "postActionRenderMode": { "type": "string", "enum": ["replace", "preserve"] }
+      },
+      "examples": [
+        {
+          "description": "Custom approve/reject card",
+          "params": {
+            "channel": "YOUR_CHANNEL_ID",
+            "text": "Review request",
+            "blocks": [
+              {
+                "type": "section",
+                "text": { "type": "mrkdwn", "text": "*Review request*\nApprove or reject?" }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  { "type": "button", "action_id": "wbk:review:approve", "text": { "type": "plain_text", "text": "Approve" }, "style": "primary" },
+                  { "type": "button", "action_id": "wbk:review:reject", "text": { "type": "plain_text", "text": "Reject" }, "style": "danger" }
+                ]
+              }
+            ],
+            "actions": [
+              { "actionId": "wbk:review:approve", "actionName": "approve" },
+              { "actionId": "wbk:review:reject", "actionName": "reject" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "slack-blockkit-bridge.update",
+      "description": "Update an existing card by cardId. Used to manually change card content or state after it was sent.",
+      "params": {
+        "cardId": {
+          "type": "string",
+          "required": true,
+          "description": "The cardId returned when the card was sent (format: card_{timestamp}_{hex})."
+        },
+        "text": { "type": "string", "description": "New fallback text. Required if blocks is omitted." },
+        "blocks": { "type": "array", "description": "New Block Kit blocks. Required if text is omitted." },
+        "statePatch": {
+          "type": "object",
+          "description": "Optional. Partial CardState to merge: { status, handledActionLabel, handledAt, ... }"
+        },
+        "metadataPatch": { "type": "object", "description": "Optional. Key-value pairs to merge into card metadata." }
+      }
+    }
+  ],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": { "type": "boolean", "default": true },
+      "allowChannels": {
+        "type": "array",
+        "items": { "type": "string" },
+        "default": []
+      },
+      "defaultReplyMode": {
+        "type": "string",
+        "enum": ["in_channel", "ephemeral", "none"],
+        "default": "in_channel"
+      },
+      "storePath": { "type": "string" },
+      "fallbackToText": { "type": "boolean", "default": true },
+      "backend": {
+        "type": "string",
+        "enum": ["direct-slack-api", "native-openclaw"],
+        "default": "direct-slack-api"
+      },
+      "deliveryMode": {
+        "type": "string",
+        "enum": ["mock", "live"],
+        "default": "mock"
+      },
+      "botToken": { "type": "string" },
+      "tokenFile": { "type": "string" },
+      "requestTimeoutMs": { "type": "number", "default": 10000 },
+      "debug": { "type": "boolean", "default": false }
+    }
+  }
+}

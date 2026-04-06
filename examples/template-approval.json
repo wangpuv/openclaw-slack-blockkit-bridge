@@ -1,0 +1,11 @@
+{
+  "kind": "approval",
+  "channel": "YOUR_CHANNEL_ID",
+  "title": "是否采用卡片模板入口？",
+  "body": "这是第一张通过 send-template 发出的 approval 模板卡，用来验证模板入口是否顺手可用。",
+  "sessionKey": "template-approval-live-1",
+  "metadata": {
+    "purpose": "template-approval-live-test",
+    "createdBy": "wilbot"
+  }
+}

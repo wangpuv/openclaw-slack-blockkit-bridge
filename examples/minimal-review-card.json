@@ -1,0 +1,51 @@
+{
+  "channel": "C12345678",
+  "threadTs": "1774438584.087969",
+  "text": "Review request: approve or reject",
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Review request*\nPlease approve or reject this item."
+      }
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "action_id": "wbk:review:approve",
+          "text": {
+            "type": "plain_text",
+            "text": "Approve"
+          },
+          "style": "primary"
+        },
+        {
+          "type": "button",
+          "action_id": "wbk:review:reject",
+          "text": {
+            "type": "plain_text",
+            "text": "Reject"
+          },
+          "style": "danger"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "actionId": "wbk:review:approve",
+      "actionName": "approve"
+    },
+    {
+      "actionId": "wbk:review:reject",
+      "actionName": "reject"
+    }
+  ],
+  "metadata": {
+    "kind": "review-request",
+    "source": "example"
+  }
+}

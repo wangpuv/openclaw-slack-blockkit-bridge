@@ -1,0 +1,16 @@
+{
+  "kind": "pick-one",
+  "channel": "YOUR_CHANNEL_ID",
+  "title": "今天先做哪件事？",
+  "body": "这是 pick-one 模板示例。",
+  "sessionKey": "template-pick-one-example",
+  "options": [
+    { "value": "todaymode", "label": "TodayMode", "style": "primary" },
+    { "value": "editorial", "label": "编辑部" },
+    { "value": "llm-engineer", "label": "LLM Engineer" }
+  ],
+  "metadata": {
+    "purpose": "template-pick-one-example",
+    "createdBy": "wilbot"
+  }
+}
