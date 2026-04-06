@@ -2,9 +2,9 @@
 
 OpenClaw plugin for sending native Slack Block Kit cards and handling interactive button clicks.
 
-![Approval card](assets/approval-card.png)
+<img src="assets/approval-card.png" width="400" alt="Approval card" />
 
-![Custom card with images](assets/custom-card.png)
+<img src="assets/custom-card.png" width="480" alt="Custom card with images" />
 
 ## Installation
 
